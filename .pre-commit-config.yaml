@@ -1,0 +1,37 @@
+repos:
+- repo: https://github.com/ambv/black
+  rev: 22.12.0
+  hooks:
+  - id: black
+    name: Reformat files
+- repo: local
+  hooks:
+  - id: no-todos
+    name: Forbid TODOs
+    entry: "TODO"
+    language: pygrep
+    types: [python]
+- repo: https://github.com/asottile/reorder_python_imports
+  rev: v3.12.0
+  hooks:
+  - id: reorder-python-imports
+    name: Reorder imports
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: 'v0.1.6'
+  hooks:
+    - id: ruff
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v1.7.1
+  hooks:
+  - id: mypy
+    name: Run type checks
+    args: ["--ignore-missing-imports"]
+- repo: local
+  hooks:
+  - id: gitchangelog
+    language: system
+    always_run: true
+    pass_filenames: false
+    name: Generate changelog
+    entry: bash -c "gitchangelog > CHANGELOG.md"
+    stages: [commit]
