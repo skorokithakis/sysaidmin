@@ -2,6 +2,8 @@
 import argparse
 import json
 import subprocess
+from typing import Optional
+from typing import Tuple
 
 import openai
 
@@ -16,7 +18,7 @@ CONTEXT = [
 ]
 
 
-def next_step(output: str) -> str:
+def next_step(output: str) -> Tuple[Optional[str], Optional[str]]:
     """Send the current output to ChatGPT, and get the next command."""
     global CONTEXT
     tools = [
@@ -80,9 +82,9 @@ Begin now.
 
         if command:
             print("\033[91m\n" + ("=" * 30))
-            print(f"Running command: {command}")
+            print(f"Want to run: {command}")
             print(("=" * 30) + "\033[0m")
-            print("Press any key to continue...")
+            print("Press any key to continue, Ctrl-C to terminate...")
             input()
             process = subprocess.Popen(
                 command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE

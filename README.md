@@ -11,7 +11,7 @@ $ sysaidmin "Whenever I try to SSH to localhost on port 22, it doesn't work. Can
 ==============================
 Running command: ssh localhost
 ==============================
-Press any key to continue...
+Press any key to continue, Ctrl-C to terminate...
 
 ssh: connect to host localhost port 22: Connection refused
 
@@ -19,7 +19,7 @@ ssh: connect to host localhost port 22: Connection refused
 ==============================
 Running command: systemctl status sshd
 ==============================
-Press any key to continue...
+Press any key to continue, Ctrl-C to terminate...
 
 ● ssh.service - OpenBSD Secure Shell server
      Loaded: loaded (/lib/systemd/system/ssh.service; enabled; vendor preset: enabled)
@@ -62,5 +62,6 @@ Your response: No, please change the port
 ==============================
 Running command: sudo sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config && sudo systemctl restart ssh
 ==============================
-Press any key to continue...
+Press any key to continue, Ctrl-C to terminate...
+^C
 ```
