@@ -7,6 +7,7 @@ Changelog
 
 Fix
 ~~~
+- Don't be Linux-specific. [Stavros Korokithakis]
 - Improve message a bit. [Stavros Korokithakis]
 
 Other
