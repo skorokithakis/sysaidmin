@@ -42,7 +42,7 @@ def next_step(output: str) -> Tuple[Optional[str], Optional[str]]:
         }
     ]
 
-    CONTEXT.append({"role": "user", "content": output})
+    CONTEXT.append({"role": "user", "content": "Command output:\n{output}"})
     completion = client.chat.completions.create(
         model="gpt-4-1106-preview", messages=CONTEXT, tools=tools
     )

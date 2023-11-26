@@ -12,6 +12,7 @@ Fix
 
 Other
 ~~~~~
+- Build: Release v0.1.0. [Stavros Korokithakis]
 - Add pre-commit. [Stavros Korokithakis]
 - Initial commit. [Stavros Korokithakis]
 - Initial commit. [Stavros Korokithakis]
