@@ -1,6 +1,13 @@
 # Changelog
 
 
+## Unreleased
+
+### Features
+
+* Add `--version` command. [Stavros Korokithakis]
+
+
 ## v0.1.0 (2023-11-26)
 
 ### Fixes
