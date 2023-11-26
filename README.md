@@ -3,6 +3,22 @@
 Sysaidmin is a GPT-powered sysadmin for your machine. You can ask it to solve a problem,
 and it will run commands on your system (with your permission) to debug what's going on.
 
+
+## Installation
+
+Using `pipx` (recommended):
+
+```
+$ pipx install sysaidmin
+```
+
+Using `pip` (less recommended, but still good):
+
+```
+$ pip install sysaidmin
+```
+
+
 ## Sample run:
 
 ```

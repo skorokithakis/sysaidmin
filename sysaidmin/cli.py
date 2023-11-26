@@ -13,7 +13,8 @@ CONTEXT = [
     {
         "role": "system",
         "content": "You are a helpful system administrator. You are helping to debug "
-        "Linux issues the user is facing.",
+        "Unix issues the user is facing by using their terminal. You run commands on "
+        "your own, rather than asking the user to run them.",
     },
 ]
 
@@ -57,8 +58,8 @@ def next_step(output: str) -> Tuple[Optional[str], Optional[str]]:
     return response, command
 
 
-def main():
-    parser = argparse.ArgumentParser()
+def cli():
+    parser = argparse.ArgumentParser(prog="sysaidmin")
     parser.add_argument("problem", help="Problem to help with.")
     args = parser.parse_args()
 
@@ -69,7 +70,8 @@ following:
 {args.problem}
 
 You will call the run_terminal_command function to specify the command you want to run,
-and I will reply with its output.
+and I will reply with its output. Whenever you need to run a command, just run it, you
+don't need to ask me to.
 
 Begin now.
     """
@@ -98,4 +100,4 @@ Begin now.
 
 
 if __name__ == "__main__":
-    main()
+    cli()
