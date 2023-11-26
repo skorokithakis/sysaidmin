@@ -6,8 +6,15 @@ from typing import Optional
 from typing import Tuple
 
 import openai
+import pkg_resources
+
+try:
+    VERSION = pkg_resources.get_distribution("sysaidmin").version
+except Exception:
+    VERSION = "0.0.0"
 
 client = openai.OpenAI()
+
 
 CONTEXT = [
     {
@@ -60,7 +67,8 @@ def next_step(output: str) -> Tuple[Optional[str], Optional[str]]:
 
 def cli():
     parser = argparse.ArgumentParser(prog="sysaidmin")
-    parser.add_argument("problem", help="Problem to help with.")
+    parser.add_argument("problem", help="A detailed description of your problem")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
     args = parser.parse_args()
 
     output = f"""

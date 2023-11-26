@@ -26,6 +26,7 @@ repos:
   - id: mypy
     name: Run type checks
     args: ["--ignore-missing-imports"]
+    additional_dependencies: ["types-setuptools"]
 - repo: local
   hooks:
   - id: gitchangelog
