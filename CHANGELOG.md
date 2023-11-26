@@ -1,21 +1,12 @@
-Changelog
-=========
+# Changelog
 
 
-(unreleased)
-------------
+## v0.1.0 (2023-11-26)
 
-Fix
-~~~
-- Don't be Linux-specific. [Stavros Korokithakis]
-- Improve message a bit. [Stavros Korokithakis]
+### Fixes
 
-Other
-~~~~~
-- Chore: Add command output indicator. [Stavros Korokithakis]
-- Build: Release v0.1.0. [Stavros Korokithakis]
-- Add pre-commit. [Stavros Korokithakis]
-- Initial commit. [Stavros Korokithakis]
-- Initial commit. [Stavros Korokithakis]
+* Don't be Linux-specific. [Stavros Korokithakis]
+
+* Improve message a bit. [Stavros Korokithakis]
 
 
