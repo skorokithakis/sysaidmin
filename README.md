@@ -18,6 +18,18 @@ Using `pip` (less recommended, but still good):
 $ pip install sysaidmin
 ```
 
+Specify your OpenAI API key:
+
+```
+$ export OPENAI_API_KEY=sk-youropenaiapikeygoeshere
+```
+
+Then run Sysaidmin with your issue:
+
+```
+sysaidmin "The foo process is emailing me and I don't know why."
+```
+
 
 ## Sample run:
 
