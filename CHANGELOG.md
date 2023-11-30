@@ -3,6 +3,10 @@
 
 ## Unreleased
 
+### Features
+
+* Allow specifying the model (implements #6) [Stavros Korokithakis]
+
 ### Fixes
 
 * Fix a bug where the program does nothing. [Stavros Korokithakis]
