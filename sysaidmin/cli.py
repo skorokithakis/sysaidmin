@@ -26,7 +26,7 @@ CONTEXT = [
 ]
 
 
-def next_step(output: str) -> Tuple[Optional[str], Optional[str]]:
+def next_step(output: str, model: str) -> Tuple[Optional[str], Optional[str]]:
     """Send the current output to ChatGPT, and get the next command."""
     global CONTEXT
     tools = [
@@ -51,7 +51,7 @@ def next_step(output: str) -> Tuple[Optional[str], Optional[str]]:
 
     CONTEXT.append({"role": "user", "content": f"Command output:\n{output}"})
     completion = client.chat.completions.create(
-        model="gpt-4-1106-preview", messages=CONTEXT, tools=tools
+        model=model, messages=CONTEXT, tools=tools
     )
 
     response = command = None
@@ -69,6 +69,9 @@ def cli():
     parser = argparse.ArgumentParser(prog="sysaidmin")
     parser.add_argument("problem", help="A detailed description of your problem")
     parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
+    parser.add_argument(
+        "-m", "--model", default="gpt-4-1106-preview", help="The model to use"
+    )
     args = parser.parse_args()
 
     output = f"""
@@ -84,7 +87,7 @@ don't need to ask me to.
 Begin now.
     """
     while True:
-        response, command = next_step(output)
+        response, command = next_step(output, args.model)
         if response:
             print("\033[94m\n" + ("=" * 30))
             print(response)

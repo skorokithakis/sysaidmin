@@ -1,6 +1,13 @@
 # Changelog
 
 
+## Unreleased
+
+### Fixes
+
+* Fix a bug where the program does nothing. [Stavros Korokithakis]
+
+
 ## v0.1.1 (2023-11-26)
 
 ### Features
