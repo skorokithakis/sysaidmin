@@ -61,6 +61,7 @@ def next_step(output: str, model: str) -> Tuple[Optional[str], Optional[str]]:
         command = json.loads(
             completion.choices[0].message.tool_calls[0].function.arguments
         )["command"]
+        CONTEXT.append({"role": "assistant", "content": f"Run command: {command}"})
     else:
         response = completion.choices[0].message.content
 
