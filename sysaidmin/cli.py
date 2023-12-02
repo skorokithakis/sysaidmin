@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import argparse
+import datetime
 import json
 import subprocess
+import tempfile
 from typing import Optional
 from typing import Tuple
 
@@ -86,14 +88,20 @@ don't need to ask me to.
 
 Begin now.
     """
+
+    logfile_name = f'{tempfile.gettempdir()}/sysaidmin_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log'
+    logfile = open(logfile_name, "w")
+    print(f"Writing log to {logfile_name}...")
     while True:
         response, command = next_step(output, args.model)
         if response:
+            logfile.write(("=" * 30) + f"\nAI response:\n{response}\n\n")
             print("\033[94m\n" + ("=" * 30))
             print(response)
             print(("=" * 30) + "\033[0m")
 
         if command:
+            logfile.write(("=" * 30) + f"\nAI command:\n{command}\n\n")
             print("\033[91m\n" + ("=" * 30))
             print(f"Want to run: {command}")
             print(("=" * 30) + "\033[0m")
@@ -105,9 +113,11 @@ Begin now.
             stdout, stderr = process.communicate()
             output = stdout.decode() + stderr.decode()
             print(output)
+            logfile.write(("=" * 30) + f"\nCommand output:\n{output}\n\n")
         else:
             print("\n\033[92mYour response: \033[0m", end="")
             output = input()
+            logfile.write(("=" * 30) + f"\nUser response:\n{output}\n\n")
 
 
 if __name__ == "__main__":
