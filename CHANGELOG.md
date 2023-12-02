@@ -5,6 +5,8 @@
 
 ### Features
 
+* Allow the AI to end the session. [Stavros Korokithakis]
+
 * Add logging. [Stavros Korokithakis]
 
 ### Fixes
