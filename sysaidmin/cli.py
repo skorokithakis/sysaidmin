@@ -3,7 +3,9 @@ import argparse
 import datetime
 import json
 import subprocess
+import sys
 import tempfile
+import time
 from typing import Optional
 from typing import Tuple
 
@@ -15,76 +17,112 @@ try:
 except Exception:
     VERSION = "0.0.0"
 
-client = openai.OpenAI()
 
-
-CONTEXT = [
-    {
-        "role": "system",
-        "content": "You are a helpful system administrator. You are helping to debug "
-        "Unix issues the user is facing by using their terminal. You run commands on "
-        "your own, rather than asking the user to run them.",
-    },
-]
-
-
-def next_step(
-    command_output: str, model: str
-) -> Optional[Tuple[Optional[str], Optional[str]]]:
-    """Send the current output to ChatGPT, and get the next command."""
-    global CONTEXT
-    tools = [
-        {
-            "type": "function",
-            "function": {
-                "name": "run_terminal_command",
-                "description": "Run a command in the terminal and get its output.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "command": {
-                            "type": "string",
-                            "description": "The command to run.",
+class Assistant:
+    def __init__(self, model: str) -> None:
+        self._client = openai.OpenAI()
+        self._assistant = self._client.beta.assistants.create(
+            instructions=(
+                "You are a helpful system administrator. You are helping to debug Unix "
+                "issues the user is facing by using their terminal. You run commands "
+                "on your own, rather than asking the user to run them."
+            ),
+            model=model,
+            tools=[
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "run_terminal_command",
+                        "description": "Run a command in the terminal and get its output.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "command": {
+                                    "type": "string",
+                                    "description": "The command to run.",
+                                },
+                            },
+                            "required": ["command"],
                         },
                     },
-                    "required": ["command"],
                 },
-            },
-        },
-        {
-            "type": "function",
-            "function": {
-                "name": "end_session",
-                "description": "End the session, either because it's successful or because there's nothing else to try.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {},
-                    "required": [],
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "end_session",
+                        "description": "End the session, either because it's successful or because there's nothing else to try.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
+                        },
+                    },
                 },
-            },
-        },
-    ]
+            ],
+        )
+        self._thread = self._client.beta.threads.create()
+        self._last_run = None
 
-    CONTEXT.append({"role": "user", "content": f"Command output:\n{command_output}"})
-    completion = client.chat.completions.create(
-        model=model, messages=CONTEXT, tools=tools
-    )
+    def wait_for_run(self):
+        """Wait for a run to complete, and return the latest state."""
+        while self._last_run.status in ("queued", "in_progress"):
+            self._last_run = self._client.beta.threads.runs.retrieve(
+                thread_id=self._thread.id, run_id=self._last_run.id
+            )
+            time.sleep(1)
+        return self._last_run
 
-    response = command = None
-    if completion.choices[0].finish_reason == "tool_calls":
-        function_name = completion.choices[0].message.tool_calls[0].function.name
-        if function_name == "end_session":
-            # The AI wants to end the session.
-            return None
+    def next_step(
+        self, command_output: str
+    ) -> Optional[Tuple[Optional[str], Optional[str]]]:
+        """Send the current output to ChatGPT, and get the next command."""
+        if self._last_run and self._last_run.status == "requires_action":
+            call = self._last_run.required_action.submit_tool_outputs.tool_calls[0]
+            self._last_run = self._client.beta.threads.runs.submit_tool_outputs(
+                thread_id=self._thread.id,
+                run_id=self._last_run.id,
+                tool_outputs=[
+                    {
+                        "tool_call_id": call.id,
+                        "output": command_output,
+                    }
+                ],
+            )
         else:
-            command = json.loads(
-                completion.choices[0].message.tool_calls[0].function.arguments
-            )["command"]
-            CONTEXT.append({"role": "assistant", "content": f"Run command: {command}"})
-    else:
-        response = completion.choices[0].message.content
+            # Add a message to the thread.
+            self._client.beta.threads.messages.create(
+                self._thread.id,
+                role="user",
+                content=command_output,
+            )
 
-    return response, command
+            # Run the thread.
+            self._last_run = self._client.beta.threads.runs.create(
+                thread_id=self._thread.id, assistant_id=self._assistant.id
+            )
+
+        # Wait for the run to complete.
+        self.wait_for_run()
+
+        # Let's see what we got.
+        response = command = None
+        if self._last_run.status == "requires_action":  # type: ignore[attr-defined]
+            function = self._last_run.required_action.submit_tool_outputs.tool_calls[  # type: ignore[attr-defined]
+                0
+            ].function
+            if function.name == "end_session":
+                # The AI wants to end the session.
+                return None
+            else:
+                command = json.loads(function.arguments)["command"]
+        elif self._last_run.status == "completed":  # type: ignore[attr-defined]
+            thread_messages = self._client.beta.threads.messages.list(
+                self._thread.id, limit=4
+            )
+            response = thread_messages.data[0].content[0].text.value
+        else:
+            sys.exit("ERROR: Got unknown run status.")
+        return response, command
 
 
 def cli():
@@ -102,21 +140,24 @@ following:
 
 {args.problem}
 
-You will call the run_terminal_command function to specify the command you want to run,
-and I will reply with its output. Whenever you need to run a command, just run it, you
-don't need to ask me to.
+The run_terminal_command function allows you to directly run terminal commands. Call it
+with  the command you want to run, and I will reply with its output. Whenever you need
+to run a command, just call this function, don't ask me or tell me to.
 
-If you feel like there's nothing else you can do, or the user is satisfied that the
-matter has been solved, feel free to call end_session to end the session.
+If there's nothing else you can do, or I am satisfied that the matter has been solved,
+call end_session to end the session.
 
-Begin now.
-    """
+Don't say you want to call functions, or what functions you will call, just call them.
+Only run one function at a time.
+
+Begin now, and explain to me each step as you run it."""
 
     logfile_name = f'{tempfile.gettempdir()}/sysaidmin_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log'
     logfile = open(logfile_name, "w")
+    assistant = Assistant(model=args.model)
     print(f"Writing log to {logfile_name}...")
     while True:
-        returned = next_step(output, args.model)
+        returned = assistant.next_step(output)
         if returned is None:
             print("\033[94m\n" + ("=" * 30))
             print("This session has completed.")
