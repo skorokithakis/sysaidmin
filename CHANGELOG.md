@@ -7,6 +7,10 @@
 
 * Add logging. [Stavros Korokithakis]
 
+### Fixes
+
+* Tell the LLM it ran a command, so it knows. [Stavros Korokithakis]
+
 
 ## v0.1.2 (2023-11-30)
 

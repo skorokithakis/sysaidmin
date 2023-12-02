@@ -28,7 +28,9 @@ CONTEXT = [
 ]
 
 
-def next_step(output: str, model: str) -> Tuple[Optional[str], Optional[str]]:
+def next_step(
+    command_output: str, model: str
+) -> Optional[Tuple[Optional[str], Optional[str]]]:
     """Send the current output to ChatGPT, and get the next command."""
     global CONTEXT
     tools = [
@@ -48,20 +50,37 @@ def next_step(output: str, model: str) -> Tuple[Optional[str], Optional[str]]:
                     "required": ["command"],
                 },
             },
-        }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "end_session",
+                "description": "End the session, either because it's successful or because there's nothing else to try.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                    "required": [],
+                },
+            },
+        },
     ]
 
-    CONTEXT.append({"role": "user", "content": f"Command output:\n{output}"})
+    CONTEXT.append({"role": "user", "content": f"Command output:\n{command_output}"})
     completion = client.chat.completions.create(
         model=model, messages=CONTEXT, tools=tools
     )
 
     response = command = None
     if completion.choices[0].finish_reason == "tool_calls":
-        command = json.loads(
-            completion.choices[0].message.tool_calls[0].function.arguments
-        )["command"]
-        CONTEXT.append({"role": "assistant", "content": f"Run command: {command}"})
+        function_name = completion.choices[0].message.tool_calls[0].function.name
+        if function_name == "end_session":
+            # The AI wants to end the session.
+            return None
+        else:
+            command = json.loads(
+                completion.choices[0].message.tool_calls[0].function.arguments
+            )["command"]
+            CONTEXT.append({"role": "assistant", "content": f"Run command: {command}"})
     else:
         response = completion.choices[0].message.content
 
@@ -87,6 +106,9 @@ You will call the run_terminal_command function to specify the command you want 
 and I will reply with its output. Whenever you need to run a command, just run it, you
 don't need to ask me to.
 
+If you feel like there's nothing else you can do, or the user is satisfied that the
+matter has been solved, feel free to call end_session to end the session.
+
 Begin now.
     """
 
@@ -94,7 +116,15 @@ Begin now.
     logfile = open(logfile_name, "w")
     print(f"Writing log to {logfile_name}...")
     while True:
-        response, command = next_step(output, args.model)
+        returned = next_step(output, args.model)
+        if returned is None:
+            print("\033[94m\n" + ("=" * 30))
+            print("This session has completed.")
+            print(("=" * 30) + "\033[0m")
+            logfile.write(("=" * 30) + "\nAI response:\nSession ended.")
+            return
+
+        response, command = returned
         if response:
             logfile.write(("=" * 30) + f"\nAI response:\n{response}\n\n")
             print("\033[94m\n" + ("=" * 30))
