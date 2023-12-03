@@ -1,6 +1,13 @@
 # Changelog
 
 
+## Unreleased
+
+### Features
+
+* Switch to the Assistants API. [Stavros Korokithakis]
+
+
 ## v0.1.3 (2023-12-02)
 
 ### Features
