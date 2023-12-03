@@ -3,7 +3,7 @@
 Sysaidmin is a GPT-powered sysadmin for your machine. You can ask it to solve a problem,
 and it will run commands on your system (with your permission) to debug what's going on.
 
-![](misc/demo.gif)!
+![](misc/demo.gif)
 
 
 ## Installation
