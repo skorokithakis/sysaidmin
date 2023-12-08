@@ -22,6 +22,7 @@ class Assistant:
     def __init__(self, model: str) -> None:
         self._client = openai.OpenAI()
         self._assistant = self._client.beta.assistants.create(
+            name="Sysaidmin",
             instructions=(
                 "You are a helpful system administrator. You are helping to debug Unix "
                 "issues the user is facing by using their terminal. You run commands "
@@ -111,7 +112,8 @@ class Assistant:
                 0
             ].function
             if function.name == "end_session":
-                # The AI wants to end the session.
+                # The AI wants to end the session, clean up the assistant.
+                self._client.beta.assistants.delete(self._assistant.id)
                 return None
             else:
                 command = json.loads(function.arguments)["command"]
