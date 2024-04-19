@@ -5,6 +5,8 @@
 
 ### Fixes
 
+* Add missing setuptools dependency. [Stavros Korokithakis]
+
 * Clean up the assistant when done. [Stavros Korokithakis]
 
 
