@@ -1,6 +1,13 @@
 # Changelog
 
 
+## Unreleased
+
+### Fixes
+
+* Clean up the assistant when done. [Stavros Korokithakis]
+
+
 ## v0.2.0 (2023-12-05)
 
 ### Features
