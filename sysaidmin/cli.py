@@ -6,14 +6,14 @@ import subprocess
 import sys
 import tempfile
 import time
+from importlib import metadata
 from typing import Optional
 from typing import Tuple
 
 import openai
-import pkg_resources
 
 try:
-    VERSION = pkg_resources.get_distribution("sysaidmin").version
+    VERSION = metadata.version("sysaidmin")
 except Exception:
     VERSION = "0.0.0"
 
