@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import traceback
 from importlib import metadata
 from typing import Optional
 from typing import Tuple
@@ -123,24 +124,19 @@ class Assistant:
             )
             response = thread_messages.data[0].content[0].text.value
         else:
-            sys.exit("ERROR: Got unknown run status.")
+            raise ValueError("ERROR: Got unknown run status.")
         return response, command
 
+    def delete(self):
+        self._client.beta.assistants.delete(self._assistant.id)
 
-def cli():
-    parser = argparse.ArgumentParser(prog="sysaidmin")
-    parser.add_argument("problem", help="A detailed description of your problem")
-    parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
-    parser.add_argument(
-        "-m", "--model", default="gpt-4-1106-preview", help="The model to use"
-    )
-    args = parser.parse_args()
 
+def run_assistant(assistant, problem):
     output = f"""
 You are a Linux expert, and I want you to help fix my problem. My problem is the
 following:
 
-{args.problem}
+{problem}
 
 The run_terminal_command function allows you to directly run terminal commands. Call it
 with  the command you want to run, and I will reply with its output. Whenever you need
@@ -156,8 +152,8 @@ Begin now, and explain to me each step as you run it."""
 
     logfile_name = f'{tempfile.gettempdir()}/sysaidmin_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log'
     logfile = open(logfile_name, "w")
-    assistant = Assistant(model=args.model)
     print(f"Writing log to {logfile_name}...")
+    logfile.write(f"Problem:\n\n{problem}\n\n")
     while True:
         returned = assistant.next_step(output)
         if returned is None:
@@ -192,6 +188,23 @@ Begin now, and explain to me each step as you run it."""
             print("\n\033[92mYour response: \033[0m", end="")
             output = input()
             logfile.write(("=" * 30) + f"\nUser response:\n{output}\n\n")
+
+
+def cli():
+    parser = argparse.ArgumentParser(prog="sysaidmin")
+    parser.add_argument("problem", help="A detailed description of your problem")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
+    parser.add_argument(
+        "-m", "--model", default="gpt-4-1106-preview", help="The model to use"
+    )
+    args = parser.parse_args()
+
+    assistant = Assistant(model=args.model)
+    try:
+        run_assistant(assistant, args.problem)
+    except Exception:
+        assistant.delete()
+        sys.exit(traceback.print_exc())
 
 
 if __name__ == "__main__":

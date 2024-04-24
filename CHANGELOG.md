@@ -1,7 +1,7 @@
 # Changelog
 
 
-## Unreleased
+## v0.2.1 (2024-04-19)
 
 ### Fixes
 
