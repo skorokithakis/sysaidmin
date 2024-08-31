@@ -1,6 +1,15 @@
 # Changelog
 
 
+## Unreleased
+
+### Fixes
+
+* Delete the assistant in most circumstances. [Stavros Korokithakis]
+
+* Replace pkg_resources with stdlib. [Branch Vincent]
+
+
 ## v0.2.1 (2024-04-19)
 
 ### Fixes
