@@ -20,8 +20,8 @@ except Exception:
 
 
 class Assistant:
-    def __init__(self, model: str) -> None:
-        self._client = openai.OpenAI()
+    def __init__(self, model: str, base_url: Optional[str] = None) -> None:
+        self._client = openai.OpenAI(base_url=base_url)
         self._assistant = self._client.beta.assistants.create(
             name="Sysaidmin",
             instructions=(
@@ -197,9 +197,10 @@ def cli():
     parser.add_argument(
         "-m", "--model", default="gpt-4-1106-preview", help="The model to use"
     )
+    parser.add_argument("--base", help="Custom base URL for the OpenAI API")
     args = parser.parse_args()
 
-    assistant = Assistant(model=args.model)
+    assistant = Assistant(model=args.model, base_url=args.base)
     try:
         run_assistant(assistant, args.problem)
     except Exception:
