@@ -1,0 +1,32 @@
+name: Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]    # Trigger on PR open or update
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: tusgino/llm-code-reviewer@v1
+        with:
+          # Required - GitHub token for PR interactions
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # Optional - API keys for different LLM services
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+          # Optional - Configure specific model versions
+          GEMINI_MODEL: 'gemini-2.5-flash-preview-04-17'
+          OPENAI_MODEL: 'gpt-4o-mini'
+          ANTHROPIC_MODEL: 'claude-3-7-sonnet-20250219'
+
+          # Optional - Exclude files from review
+          INPUT_EXCLUDE: '*.md,*.txt'
+
+          # Optional - Set review language
+          HUMAN_LANGUAGE: 'en'
+
+          # Optional - Set primary model
+          # Can use 'gemini', 'openai', 'anthropic'
+          PRIMARY_MODEL: 'gemini'
