@@ -1,7 +1,8 @@
 # Sysaidmin
 
-Sysaidmin is a GPT-powered sysadmin for your machine. You can ask it to solve a problem,
-and it will run commands on your system (with your permission) to debug what's going on.
+Sysaidmin is an LLM-powered sysadmin for your machine. You can ask it to solve
+a problem, and it will run commands on your system (with your permission) to debug
+what's going on.
 
 ![](misc/demo.gif)
 
@@ -23,13 +24,24 @@ $ pip install sysaidmin
 Specify your OpenAI API key:
 
 ```bash session
-$ export OPENAI_API_KEY=sk-youropenaiapikeygoeshere
+$ export SYSAIDMIN_API_KEY=sk-youropenaiapikeygoeshere
 ```
 
 Then run Sysaidmin with your issue:
 
 ```bash session
 $ sysaidmin "The foo process is emailing me and I don't know why."
+```
+
+## Using other models
+
+Any model that supports the OpenAI Chat Completions API can be used. For example, to use
+Google Gemini:
+
+```
+> sysaidmin --api-key=$GEMINI_API_KEY -m gemini-2.5-flash-preview-04-17 \
+  -b "https://generativelanguage.googleapis.com/v1beta/openai" \
+  "How do I list files?"
 ```
 
 

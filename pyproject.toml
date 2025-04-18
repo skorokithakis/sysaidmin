@@ -1,12 +1,14 @@
 [project]
 name = "sysaidmin"
-version = "0.2.2"
-description = "A GPT-powered sysadmin."
+version = "0.2.3"
+description = "An LLM-powered sysadmin."
 authors = [{ name = "Stavros Korokithakis", email = "hi@stavros.io" }]
-requires-python = ">=3.8.1"
+requires-python = ">=3.9"
 readme = "README.md"
 license = "AGPL-3.0-or-later"
-dependencies = ["openai"]
+dependencies = [
+    "openai-agents>=0.0.11",
+]
 
 [project.urls]
 Repository = "https://github.com/skorokithakis/sysaidmin/"
@@ -22,4 +24,4 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.ruff]
-ignore = ["F403", "E501", "N802", "N803", "N806", "C901", "D100", "D102", "D102", "D10"]
+lint.ignore = ["F403", "E501", "N802", "N803", "N806", "C901", "D100", "D102", "D102", "D10"]
