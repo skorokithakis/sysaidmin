@@ -1,6 +1,6 @@
 [project]
 name = "sysaidmin"
-version = "0.2.4"
+version = "0.2.5"
 description = "An LLM-powered sysadmin."
 authors = [{ name = "Stavros Korokithakis", email = "hi@stavros.io" }]
 requires-python = ">=3.9"
