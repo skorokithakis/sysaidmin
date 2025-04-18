@@ -134,7 +134,8 @@ Begin now, and explain to me each step as you run it.""",
 
 def cli():
     parser = argparse.ArgumentParser(
-        description="Sysaidmin - AI System Administration Helper"
+        description="Sysaidmin - AI System Administration Helper",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("problem", help="A detailed description of your problem")
     parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
@@ -142,17 +143,18 @@ def cli():
         "-b",
         "--base-url",
         help="Custom base URL for the AI API",
-        default="https://api.openai.com/v1/",
+        default=os.getenv("SYSAIDMIN_BASE_URL", "https://api.openai.com/v1/"),
     )
     parser.add_argument(
+        "-a",
         "--api-key",
         default=os.getenv("SYSAIDMIN_API_KEY", ""),
-        help="API key for the AI service (defaults to SYSAIDMIN_API_KEY env var)",
+        help="API key for the AI service",
     )
     parser.add_argument(
         "-m",
         "--model",
-        default="o4-mini",
+        default=os.getenv("SYSAIDMIN_MODEL", "o4-mini"),
         help="The model to use for the AI agent",
     )
 

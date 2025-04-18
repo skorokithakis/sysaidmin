@@ -39,6 +39,7 @@ Then run Sysaidmin with your issue:
 $ sysaidmin "The foo process is emailing me and I don't know why."
 ```
 
+
 ## Using other models
 
 Any model that supports the OpenAI Chat Completions API can be used. For example, to use
@@ -50,6 +51,14 @@ Google Gemini:
   "How do I list files?"
 ```
 
+
+## Environment variables
+
+You can use the following environment variables in place of parameters:
+
+* `SYSAIDMIN_BASE_URL`: The base URL for the service.
+* `SYSAIDMIN_API_KEY`: The API key.
+* `SYSAIDMIN_MODEL`: The model to use.
 
 ## Sample run:
 
