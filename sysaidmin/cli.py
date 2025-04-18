@@ -65,7 +65,7 @@ def run_command(command: str) -> str:
     )
     stdout, stderr = process.communicate()
     output = stdout.decode() + stderr.decode()
-    print_message(output, "CMD")
+    print_message(output, "OUT")
     LOGFILE.write(("=" * 30) + f"\nCommand output:\n{output}\n\n")  # type: ignore
     return output
 
@@ -116,6 +116,9 @@ end the session.
 
 Don't say you want to run a tool, or what tool you will run, just run it.
 Only run one tool at a time.
+
+Don't try to run commands that require input, you can't provide it and they will freeze.
+Instead, ask the user to run them for you, and ask them to provide their output to you.
 
 Begin now, and explain to me each step as you run it.""",
     )
