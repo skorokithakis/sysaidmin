@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/skorokithakis/sysaidmin/"
+repository = "https://github.com/skorokithakis/sysaidmin/"
 
 [project.scripts]
 sysaidmin = "sysaidmin.cli:cli"
