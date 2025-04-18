@@ -9,10 +9,16 @@ what's going on.
 
 ## Installation
 
-Using `pipx` (recommended):
+Using `uv` (recommended):
 
 ```bash session
-$ pipx install sysaidmin
+$ uv tool install sysaidmin
+```
+
+Or, to run directly:
+
+```bash session
+$ uvx sysaidmin
 ```
 
 Using `pip` (less recommended, but still good):

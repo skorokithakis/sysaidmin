@@ -1,22 +1,16 @@
 Output demo.gif
 
-Set FontSize 20
+Set FontSize 16
 Set Width 800
 Set Height 600
 
-Type "sysaidmin -m gpt-3.5-turbo-1106 'I forgot how to list my files!'"
+Type "sysaidmin 'I forgot how to list my files! Do it for me'"
 
 Sleep 300ms
 
 Enter
 
 Sleep 10s
-
-Enter
-
-Sleep 10s
-
-Type "No, thank you."
 
 Enter
 

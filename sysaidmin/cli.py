@@ -31,16 +31,12 @@ def print_message(message: str, section: str):
 
     def template(s, l):
         line = f"\33[37;48:2:0:113:102m {s} \33[39;49m    {l}"
-        return (" " * (10 - len(section))) + line
+        return (" " * (6 - len(section))) + line
 
     for line in message.strip("\n").splitlines():
         print(template(section.upper(), line))
 
     print()
-
-
-def print_response(message: str):
-    pass
 
 
 @function_tool
@@ -101,7 +97,7 @@ async def run(problem: str, base_url: str | None, api_key: str, model_name: str)
     global LOGFILE
     logfile_name = f"{tempfile.gettempdir()}/sysaidmin_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
     LOGFILE = open(logfile_name, "w")
-    print_message(f"Writing log to {logfile_name}...\n", "Sysaidmin")
+    print_message(f"Writing log to {logfile_name}...\n", "Sysai")
     LOGFILE.write(f"Problem:\n\n{problem}\n\n")
 
     result = await Runner.run(
@@ -127,13 +123,13 @@ Begin now, and explain to me each step as you run it.""",
     LOGFILE.write(("=" * 30) + f"\nAI response:\n{result.final_output}\n\n")
     print_message(result.final_output, "AI")
 
-    print_message("This session has completed.", "Sysaidmin")
+    print_message("This session has completed.", "Sysai")
     LOGFILE.write(("=" * 30) + "\nAI response:\nSession ended.")
 
     return
 
 
-if __name__ == "__main__":
+def cli():
     parser = argparse.ArgumentParser(
         description="Sysaidmin - AI System Administration Helper"
     )
@@ -153,7 +149,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-m",
         "--model",
-        default="gemini-1.5-flash-latest",  # Or choose another sensible default
+        default="o4-mini",
         help="The model to use for the AI agent",
     )
 
@@ -166,3 +162,7 @@ if __name__ == "__main__":
         )
 
     asyncio.run(run(args.problem, args.base_url, args.api_key, args.model))
+
+
+if __name__ == "__main__":
+    cli()
